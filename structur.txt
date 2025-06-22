@@ -1,0 +1,29 @@
+c:/Users/advan/Downloads/frezedroid/
+├── .gitignore
+├── admin.py
+├── api_handler.py
+├── app.py
+├── Dockerfile
+├── forms.py
+├── heroku.yml
+├── models.py
+├── requirements.txt
+├── runtime.txt
+├── structur.txt
+├── static/
+│   ├── css/
+│   │   ├── admin_style.css
+│   │   └── style.css
+│   └── js/
+│       └── script.js
+└── templates/
+    ├── index.html
+    ├── landing.html
+    ├── login.html
+    └── admin/
+        ├── admin_base.html
+        ├── admin_dashboard.html
+        ├── admin_login.html
+        ├── admin_settings.html
+        ├── create_edit_user.html
+        └── users.html

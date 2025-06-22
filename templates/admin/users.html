@@ -1,0 +1,130 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}Manage Users - FreezeDroid Admin{% endblock %}
+{% block page_title %}User Management{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <div class="card-header">
+        <h2>All Users ({{ users.total if users else '0' }})</h2> <!-- Tambah 'if users else 0' untuk jaga-jaga -->
+        <a href="{{ url_for('admin_bp.create_user') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add New User</a>
+    </div>
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Plan</th>
+                    <th>Expiry Date</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if users and users.items %} <!-- Tambah 'if users' -->
+                {% for user in users.items %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email or 'N/A' }}</td>
+                    <td>{{ user.plan.value }}</td>
+                    <td>
+                        {% if user.expiry_date %}
+                            {{ user.expiry_date.strftime('%Y-%m-%d') }}
+                            {% if user.is_expired %}<span class="badge bg-danger">Expired</span>{% endif %} <!-- Ganti class badge -->
+                        {% else %}
+                            No Expiry
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_active %}
+                            <span class="badge bg-success">Active</span> <!-- Ganti class badge -->
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Inactive</span> <!-- Ganti class badge -->
+                        {% endif %}
+                    </td>
+                    <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else 'N/A' }}</td> <!-- Tambah if -->
+                    <td class="actions-cell" style="min-width: 280px;"> <!-- Tambah class dan style untuk lebar -->
+                        <a href="{{ url_for('admin_bp.edit_user', user_id=user.id) }}" class="btn btn-sm btn-info me-1"><i class="fas fa-edit"></i> Edit</a>
+                        
+                        <form action="{{ url_for('admin_bp.delete_user', user_id=user.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to DEACTIVATE (soft delete) this user \'{{ user.username }}\'? The account can be reactivated later.');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-warning me-1"><i class="fas fa-user-slash"></i> Deactivate</button>
+                        </form>
+
+                        <!-- >>> PERUBAHAN DIMULAI: Menambahkan Tombol dan Form untuk Hard Delete <<< -->
+                        <form action="{{ url_for('admin_bp.hard_delete_user', user_id=user.id) }}" method="POST" style="display: inline;" onsubmit="return confirmHardDelete('{{ user.username }}');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i> Hard Delete</button>
+                        </form>
+                        <!-- >>> PERUBAHAN SELESAI <<< -->
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center">No users found.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if users and users.pages > 1 %} <!-- Tambah 'if users' -->
+    <nav class="pagination-nav mt-3"> <!-- Tambah class mt-3 -->
+        <ul class="pagination justify-content-center"> <!-- Tambah class justify-content-center -->
+            {% if users.has_prev %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('admin_bp.list_users', page=users.prev_num) }}">« Previous</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">« Previous</span></li>
+            {% endif %}
+
+            {% for page_num in users.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %} <!-- Perbaiki iter_pages -->
+                {% if page_num %}
+                    {% if users.page == page_num %}
+                        <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('admin_bp.list_users', page=page_num) }}">{{ page_num }}</a></li>
+                    {% endif %}
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if users.has_next %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('admin_bp.list_users', page=users.next_num) }}">Next »</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Next »</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<!-- >>> PERUBAHAN DIMULAI: Menambahkan Script untuk Konfirmasi Hard Delete <<< -->
+{% block scripts_extra %}
+<script>
+function confirmHardDelete(username) {
+    var confirmationMessage = "DANGER! Are you absolutely sure you want to PERMANENTLY DELETE the user '" + username + "'?\n\n" +
+                              "This action CANNOT be undone. All data associated with this user will be removed from the database.\n\n" +
+                              "Type the username '" + username + "' below to confirm.";
+    
+    var userInput = prompt(confirmationMessage);
+    
+    if (userInput === username) {
+        return true; // Proceed with form submission
+    } else if (userInput !== null) { // User typed something but it's incorrect
+        alert("Incorrect username typed. Permanent deletion cancelled.");
+        return false; // Cancel form submission
+    } else { // User clicked Cancel on the prompt
+        alert("Permanent deletion cancelled.");
+        return false; // Cancel form submission
+    }
+}
+</script>
+{% endblock %}
+<!-- >>> PERUBAHAN SELESAI <<< -->
+{% endblock %}

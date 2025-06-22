@@ -1,0 +1,17 @@
+# heroku.yml
+build:
+  docker:
+    web: Dockerfile
+  # If you had worker dynos, you would define them here too
+  # worker: Dockerfile # Or a different Dockerfile if needed
+
+# Optional: Configuration for the release phase (e.g., database migrations)
+# release:
+#   image: web # Use the same image as the web process
+#   command:
+#     - python manage.py migrate # Example command
+
+# Optional: Run commands can be defined for `heroku run`
+# run:
+#   web: bundle exec rails server -p $PORT # Example for Rails
+#   console: bundle exec rails c # Example for Rails

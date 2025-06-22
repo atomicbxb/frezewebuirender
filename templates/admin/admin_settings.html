@@ -1,0 +1,48 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}Global Settings - FreezeDroid Admin{% endblock %}
+{% block page_title %}Global Application Settings{% endblock %}
+
+{% block content %}
+<div class="admin-card form-card">
+    <form method="POST" action="" novalidate>
+        {{ form.hidden_tag() }} <!-- CSRF token -->
+        <fieldset>
+            <legend>Application Control</legend>
+            <div class="form-group form-check">
+                {{ form.maintenance_mode(class="form-check-input") }}
+                {{ form.maintenance_mode.label(class="form-check-label") }}
+                <small class="form-text text-muted">If checked, regular users will not be able to log in or use the application. Admins can still access the admin panel.</small>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Trial Plan Settings</legend>
+            <div class="form-group">
+                {{ form.trial_duration_days.label(class="form-label") }}
+                {{ form.trial_duration_days(class="form-control" + (" is-invalid" if form.trial_duration_days.errors else "")) }}
+                <small class="form-text text-muted">Default duration in days for new trial accounts.</small>
+                {% if form.trial_duration_days.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.trial_duration_days.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.trial_daily_limit.label(class="form-label") }}
+                {{ form.trial_daily_limit(class="form-control" + (" is-invalid" if form.trial_daily_limit.errors else "")) }}
+                <small class="form-text text-muted">Maximum number of single crash requests a trial user can make per day.</small>
+                {% if form.trial_daily_limit.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.trial_daily_limit.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </fieldset>
+
+        <div class="form-group form-actions">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

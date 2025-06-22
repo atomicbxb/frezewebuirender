@@ -1,0 +1,58 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}Admin Dashboard - FreezeDroid{% endblock %}
+{% block page_title %}Dashboard Overview{% endblock %}
+
+{% block content %}
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <i class="fas fa-users"></i>
+        <div class="stat-info">
+            <h3>{{ total_users }}</h3>
+            <p>Total Users</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-user-check"></i>
+        <div class="stat-info">
+            <h3>{{ active_users }}</h3>
+            <p>Active & Non-Expired Users</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-user-clock"></i>
+        <div class="stat-info">
+            <h3>{{ trial_users }}</h3>
+            <p>Trial Users</p>
+        </div>
+    </div>
+    <div class="stat-card {{ 'maintenance-on' if maintenance_mode else 'maintenance-off' }}">
+        <i class="fas {{ 'fa-power-off' if maintenance_mode else 'fa-toggle-on' }}"></i>
+        <div class="stat-info">
+            <h3>Maintenance Mode</h3>
+            <p>{{ 'ACTIVE' if maintenance_mode else 'INACTIVE' }}</p>
+        </div>
+        <a href="{{ url_for('admin_bp.admin_settings') }}" class="stat-action">Manage</a>
+    </div>
+</div>
+
+<div class="admin-card quick-actions">
+    <h2>Quick Actions</h2>
+    <ul>
+        <li><a href="{{ url_for('admin_bp.create_user') }}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add New User</a></li>
+        <li><a href="{{ url_for('admin_bp.list_users') }}" class="btn btn-secondary"><i class="fas fa-list-ul"></i> View All Users</a></li>
+        <li><a href="{{ url_for('admin_bp.admin_settings') }}" class="btn btn-info"><i class="fas fa-sliders-h"></i> Adjust Settings</a></li>
+    </ul>
+</div>
+
+<div class="admin-card recent-activity-placeholder">
+    <h2>Recent System Logs / Activity (Placeholder)</h2>
+    <p>This section can be populated with recent important logs or user activities if implemented.</p>
+    <p>For now, please check the main application logs for detailed activity.</p>
+     <a href="{{ url_for('stream_logs') }}" target="_blank" class="btn btn-secondary">
+        <i class="fas fa-scroll"></i> View Real-time Log Stream
+    </a>
+    <p class="small-text">Note: The real-time log stream shows all server activity, not just admin-specific actions, and requires you to be logged into the main app (can open in new tab if admin session is active).</p>
+</div>
+
+{% endblock %}

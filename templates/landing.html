@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreezeDroid - Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Style akan ditimpa oleh style.css yang baru -->
+</head>
+<body class="landing-body"> <!-- Tambahkan class untuk styling khusus landing page -->
+    <div class="login-button-area">
+        <a href="{{ url_for('login') }}" class="login-btn"><i class="fas fa-sign-in-alt"></i> User Login</a>
+    </div>
+
+    <div class="main-content-area">
+        <div class="landing-header">
+            <h1><i class="fas fa-snowflake"></i> FreezeDroid</h1>
+            <p>Powerful tools at your fingertips. Choose your access level below.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages-container">
+              {% for category, message in messages %}
+                <div class="flash-message {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="pricing-container">
+            <div class="pricing-box">
+                <h2>Free Trial</h2>
+                <div class="price">FREE</div>
+                <div class="duration">Limited Time Access</div>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Access to Single Target Crash</li>
+                    <li><i class="fas fa-check-circle"></i> {{ trial_daily_limit | default(10) }} Requests / Day</li>
+                    <li><i class="fas fa-check-circle"></i> {{ trial_duration_days | default(3) }} Days Trial Duration</li>
+                    <li><i class="fas fa-check-circle"></i> Basic Support</li>
+                </ul>
+                <a href="https://t.me/sonia_radiance" target="_blank" class="buy-now-btn">Get Started (via Telegram)</a>
+            </div>
+
+            <div class="pricing-box popular">
+                <div class="popular-badge">Most Popular</div>
+                <h2>Single Pro</h2>
+                <div class="price">25k <span class="currency">IDR</span></div>
+                <div class="duration">per Month</div>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Access to Single Target Crash</li>
+                    <li><i class="fas fa-check-circle"></i> Unlimited Single Requests</li>
+                    <li><i class="fas fa-check-circle"></i> Priority Support</li>
+                    <li><i class="fas fa-check-circle"></i> Full Access Duration</li>
+                </ul>
+                <a href="https://t.me/sonia_radiance" target="_blank" class="buy-now-btn">Buy Now (via Telegram)</a>
+            </div>
+
+            <div class="pricing-box">
+                <h2>Multi Pro</h2>
+                <div class="price">45k <span class="currency">IDR</span></div>
+                <div class="duration">per Month</div>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Access to Single Target Crash</li>
+                    <li><i class="fas fa-check-circle"></i> Access to Multi-Target Crash</li>
+                    <li><i class="fas fa-check-circle"></i> Unlimited All Requests</li>
+                    <li><i class="fas fa-check-circle"></i> Premium Support</li>
+                    <li><i class="fas fa-check-circle"></i> Full Access Duration</li>
+                </ul>
+                <a href="https://t.me/sonia_radiance" target="_blank" class="buy-now-btn">Buy Now (via Telegram)</a>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>© <span id="currentYear"></span> FreezeDroid. All rights reserved.</p>
+    </footer>
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

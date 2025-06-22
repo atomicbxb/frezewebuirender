@@ -1,0 +1,88 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}{{ legend }} - FreezeDroid Admin{% endblock %}
+{% block page_title %}{{ legend }}{% endblock %}
+
+{% block content %}
+<div class="admin-card form-card">
+    <form method="POST" action="" novalidate>
+        {{ form.hidden_tag() }} <!-- CSRF token -->
+        <fieldset>
+            <legend>{{ legend }}</legend>
+
+            <div class="form-group">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
+                {% if form.username.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.username.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                {% if form.email.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.email.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.plan.label(class="form-label") }}
+                {{ form.plan(class="form-control" + (" is-invalid" if form.plan.errors else "")) }}
+                {% if form.plan.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.plan.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.expiry_days.label(class="form-label") }}
+                {% if user and user.expiry_date %}
+                    <small class="form-text text-muted">Current expiry: {{ user.expiry_date.strftime('%Y-%m-%d') }}. Setting days here will override it based on <strong>today's date</strong>.</small>
+                {% endif %}
+                {{ form.expiry_days(class="form-control" + (" is-invalid" if form.expiry_days.errors else ""), placeholder="e.g., 30 for 30 days from now") }}
+                 <small class="form-text text-muted">Leave blank or 0 to not change/set based on plan default (for new users). A value of 0 for existing user will set expiry to today.</small>
+                {% if form.expiry_days.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.expiry_days.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
+                {% if form.password.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.password.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.confirm_password.label(class="form-label") }}
+                {{ form.confirm_password(class="form-control" + (" is-invalid" if form.confirm_password.errors else "")) }}
+                {% if form.confirm_password.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.confirm_password.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group form-check">
+                {{ form.is_active(class="form-check-input") }}
+                {{ form.is_active.label(class="form-check-label") }}
+            </div>
+        </fieldset>
+        <div class="form-group form-actions">
+            {{ form.submit(class="btn btn-primary") }}
+            <a href="{{ url_for('admin_bp.list_users') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

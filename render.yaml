@@ -1,0 +1,68 @@
+# render.yaml
+# Blueprint for deploying the FreezeDroid application on Render.com using Docker
+# This version is configured to use an EXTERNAL database (e.g., from Koyeb/Heroku).
+
+services:
+  # Definisi untuk Web Service utama (Docker Container)
+  - type: web
+    name: freezedroid-app
+    # Gunakan 'docker' sebagai environment
+    env: docker
+    # Dockerfile path (default: ./Dockerfile)
+    dockerfilePath: ./Dockerfile
+    # Port yang akan diexpose oleh container (sesuai dengan Dockerfile)
+    # Render akan otomatis map ke $PORT environment variable
+    
+    # Pengaturan untuk Health Check, memastikan service berjalan dengan benar
+    healthCheckPath: /
+    
+    # Pengaturan untuk Environment Variables
+    envVars:
+      # --- Variabel yang Boleh Disimpan di YAML (Non-Sensitif) ---
+      - key: WEB_CONCURRENCY # Jumlah worker gunicorn, bisa disesuaikan
+        value: 2 # Sesuai dengan default di Dockerfile
+      - key: INITIAL_MAINTENANCE_MODE
+        value: "False"
+      - key: PYTHONDONTWRITEBYTECODE
+        value: "1"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+
+      # --- Variabel Sensitif (Isi nilainya di Dashboard Render) ---
+      # Anda bisa membuat value sync 'false' agar tidak pernah tersimpan di YAML
+      - key: SECRET_KEY
+        generateValue: true # Render akan membuatkan nilai acak untuk Anda
+      - key: WTF_CSRF_SECRET_KEY
+        generateValue: true # Render juga akan membuatkan nilai acak
+      
+      # Kredensial Admin -> Anda HARUS mengisi ini di dashboard
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_PATH_SECRET
+        sync: false
+
+      # Kredensial API Eksternal -> Anda HARUS mengisi ini di dashboard
+      - key: API_USERNAME
+        sync: false
+      - key: API_KEY
+        sync: false
+      - key: API_BASE_URL
+        sync: false
+      - key: API_LOGIN_ACTION_PATH
+        sync: false
+      - key: API_EXECUTE_PATH
+        sync: false
+      
+      # URL Database Eksternal -> Anda HARUS mengisi ini di dashboard
+      # Dapatkan connection string dari Koyeb/Heroku/provider lain
+      # Contoh: postgresql://user:password@host:port/dbname
+      - key: DATABASE_URL
+        sync: false
+
+# Catatan:
+# 1. Render akan otomatis menjalankan 'docker build' untuk membangun image
+# 2. $PORT environment variable akan otomatis tersedia dan di-inject ke container
+# 3. Dockerfile sudah dikonfigurasi untuk bind ke "0.0.0.0:$PORT"
+# 4. Tidak perlu buildCommand dan startCommand karena sudah didefinisikan di Dockerfile
